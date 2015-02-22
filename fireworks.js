@@ -3,6 +3,8 @@
  *  
  * Changes:
  *  Fireworks start and explode position now follows mouse click position.
+ *  Added background music.
+ *  Added firewokrs that explodes in a heart shape.
  * 
  * This software is modified on top of Paul Lewis original code and tutorial
  * for CreativeJS at http://creativejs.com/tutorials/creating-fireworks/
@@ -170,10 +172,12 @@ var Fireworks = (function() {
         // then we know we can safely(!) explode it... yeah.
         if(!firework.usePhysics) {
 
-          if(Math.random() < 0.8) {
+          if(Math.random() < 0.45) {
+            FireworkExplosions.circle(firework);
+          } else if (Math.random() < 0.9) {
             FireworkExplosions.star(firework);
           } else {
-            FireworkExplosions.circle(firework);
+            FireworkExplosions.heart(firework)
           }
         }
       }
@@ -376,6 +380,37 @@ var FireworkExplosions = {
         {
           x: Math.cos(particleAngle) * randomVelocity,
           y: Math.sin(particleAngle) * randomVelocity
+        },
+        firework.color,
+        true);
+    }
+  },
+  
+  /**
+   * Explodes in a heart shape
+   */
+  heart: function(firework) {
+    var i;
+    var count = 100;
+    var angle = (Math.PI * 2) / count;
+    
+    for (i = 50; i >= -50; i--) { // as the formula assumes 0 as central
+      /**
+       * great control is required for the shape
+       * hence velocity needs to be constant
+       */
+      var velocity = 4; 
+      var particleAngle = i * angle;
+      
+      Fireworks.createParticle(
+        firework.pos,
+        null,
+        /** heart shape formula, thanks to Skeptic on 
+         * http://au.mathworks.com/matlabcentral/newsreader/view_thread/302827
+         */
+        {
+          x: particleAngle * Math.sin( Math.PI * Math.sin(particleAngle)/particleAngle) * velocity,
+          y: Math.abs(particleAngle) * Math.cos( Math.PI * Math.sin(particleAngle)/particleAngle) * velocity
         },
         firework.color,
         true);
